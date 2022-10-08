@@ -1,0 +1,52 @@
+{
+  "name": "clive0417/d-b-diagram-regular-parse",
+  "description": "A d b diagram regular parse",
+  "license": "MIT",
+  "keywords": [
+    "d",
+    "b",
+    "diagram",
+    "regular",
+    "parse"
+  ],
+  "type": "library",
+  "authors": [
+    {
+      "name": "",
+      "email": ""
+    }
+  ],
+  "require": {
+    "php": ">=7.2",
+    "illuminate/support": "^6.0|^7.0|^8.0"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^4.0|^5.0|^6.0",
+    "phpunit/phpunit": "^8.4|^9.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Clive0417\\DBDiagramRegularParse\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Clive0417\\DBDiagramRegularParse\\Tests\\": "tests"
+    }
+  },
+  "scripts": {
+    "phpunit": "phpunit"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Clive0417\\DBDiagramRegularParse\\ServiceProvider"
+      ]
+    }
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "optimize-autoloader": true
+  }
+}
