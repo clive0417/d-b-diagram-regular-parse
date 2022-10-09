@@ -68,7 +68,6 @@ class TableMigrationCreator
             $column_text = '';
             foreach ($this->Columns as $ColumnModel) {
                 /** @var ColumnModel $ColumnModel */
-                /** @var \Clive0417\ModelGenerator\Models\UseModel $Use */
                 if ($ColumnModel->toLine() === '') {
                     continue;
                 }
@@ -81,7 +80,6 @@ class TableMigrationCreator
             $index_text = '';
             foreach ($this->Indexes as $IndexModel) {
                 /** @var IndexModel $IndexModel */
-                /** @var \Clive0417\ModelGenerator\Models\UseModel $Use */
                 if ($IndexModel->toLine() === '') {
                     continue;
                 }

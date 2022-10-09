@@ -50,11 +50,11 @@ class ColumnModel
         }
         //append default
         // TODO  添加INT judge
-        if ($this->column_default !== '') {
+        if ($this->column_default !== null) {
             $line = $line.'->'.sprintf('default(%s)',"'".$this->column_default."'");
         }
         //append comment
-        if ($this->column_comment !== '') {
+        if ($this->column_comment !== null) {
             $line = $line.'->'.sprintf('comment(%s)',"'".$this->column_comment."'");
         }
         return $line;
