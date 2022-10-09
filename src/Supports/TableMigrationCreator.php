@@ -64,20 +64,28 @@ class TableMigrationCreator
         $this->stub = str_replace('{{table_name}}',$this->table_name,$this->stub);
 
         // 替換 table_column
-        if ($this->Columns->isNotEmpty()) {
+        if ($this->Columns) {
+            $column_text = '';
             foreach ($this->Columns as $ColumnModel) {
                 /** @var ColumnModel $ColumnModel */
                 /** @var \Clive0417\ModelGenerator\Models\UseModel $Use */
-                $column_text = $column_text.$ColumnModel->toLine().PHP_EOL;
+                if ($ColumnModel->toLine() === '') {
+                    continue;
+                }
+                $column_text = $column_text.'    '.'    '.'    '.$ColumnModel->toLine().';'.PHP_EOL;
             }
             $this->stub =  str_replace('{{table_columns}}',$column_text,$this->stub);
         }
         // 替換 table_index
-        if ($this->Indexes->isNotEmpty()) {
+        if ($this->Indexes) {
+            $index_text = '';
             foreach ($this->Indexes as $IndexModel) {
                 /** @var IndexModel $IndexModel */
                 /** @var \Clive0417\ModelGenerator\Models\UseModel $Use */
-                $index_text = $index_text.$IndexModel->toLine().PHP_EOL;
+                if ($IndexModel->toLine() === '') {
+                    continue;
+                }
+                $index_text = $index_text.'    '.'    '.'    '.$IndexModel->toLine().';'.PHP_EOL;
             }
             $this->stub =  str_replace('{{table_indexes}}',$index_text,$this->stub);
         }
@@ -97,6 +105,6 @@ class TableMigrationCreator
             File::makeDirectory($this->migration_path, $mode = 0777, true, true);
         }
 
-        File::put($this->migration_path.$this->table_name.Carbon::now()->format('Y-m-d H-m-s').'.php',$this->stub);
+        File::put($this->migration_path.Carbon::now()->format('Y_m_d_His').'_create_'.$this->table_name.'_table'.'.php',$this->stub);
     }
 }

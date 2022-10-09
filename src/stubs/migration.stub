@@ -13,10 +13,8 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('{{table_name}}', function (Blueprint $table) {
-            {{table_columns}}
-
-            {{table_indexes}}
-
+{{table_columns}}
+{{table_indexes}}
         });
         DB::statement("ALTER TABLE `{{table_name}}` comment '{{table_comment}}'");
     }
