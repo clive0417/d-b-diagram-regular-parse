@@ -25,6 +25,8 @@ php artisan vendor:publish --provider="Clive0417\DBDiagramRegularParse\ServicePr
 ## Usage
 
 ### 使用方法請參考影片
+https://youtu.be/4fopuupr1Mk
+
 
 ### step1 安裝套件
 ```bash
