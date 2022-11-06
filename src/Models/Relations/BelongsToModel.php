@@ -23,10 +23,7 @@ class BelongsToModel
             return $this->belongsTo(MemberEntity::class, 'member_id');
         }
          * */
-        $line = "public function {{relation_method_name}}(): BelongsTo
-        {
-            return \$this->belongsTo({{relation_entity_name}}::class, {{foreign_key}});
-        }";
+        $line = "public function {{relation_method_name}}(): BelongsTo{return \$this->belongsTo({{relation_entity_name}}::class, {{foreign_key}});}";
         $line = Str::replace('{{relation_method_name}}',$this->relation_method_name,$line);
         $line = Str::replace('{{relation_entity_name}}',$this->relation_entity_name,$line);
         $line = Str::replace('{{foreign_key}}',"'".$this->foreign_key."'",$line);
