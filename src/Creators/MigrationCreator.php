@@ -1,14 +1,14 @@
 <?php
-namespace Clive0417\DBDiagramRegularParse\Supports;
+namespace Clive0417\DBDiagramRegularParse\Creators;
 
 use Carbon\Carbon;
-use Clive0417\DBDiagramRegularParse\Models\ColumnModel;
-use Clive0417\DBDiagramRegularParse\Models\IndexModel;
+use Clive0417\DBDiagramRegularParse\Models\Migrations\ColumnModel;
+use Clive0417\DBDiagramRegularParse\Models\Migrations\IndexModel;
 use Illuminate\Support\Facades\File;
 
-class TableMigrationCreator
+class MigrationCreator
 {
-    protected $stub_path = __DIR__ . '/../stubs/migration.stub';
+    protected $stub_path = __DIR__ . '/../stubs/Migrations/migration.stub';
 
     protected $migration_path = __DIR__ . '/../../../../../database/migrations/';
 
@@ -24,13 +24,17 @@ class TableMigrationCreator
 
 
 
-    public function __construct()
+    public function __construct(string $migration_path = null )
     {
         $this->stub = File::get($this->stub_path);
         $this->table_name = '';
         $this->table_comment = '';
         $this->Columns = collect();
         $this->Indexes = collect();
+
+        if ($migration_path !== null) {
+            $this->migration_path = $migration_path;
+        }
 
     }
 

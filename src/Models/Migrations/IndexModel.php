@@ -1,6 +1,6 @@
 <?php
 
-namespace Clive0417\DBDiagramRegularParse\Models;
+namespace Clive0417\DBDiagramRegularParse\Models\Migrations;
 
 
 class IndexModel

@@ -1,9 +1,8 @@
 <?php
 
-namespace Clive0417\DBDiagramRegularParse\Models;
+namespace Clive0417\DBDiagramRegularParse\Models\Relations;
 
 use Illuminate\Support\Str;
-use Mpociot\HumanRegex\HumanRegex;
 
 class BelongsToManyModel
 {
