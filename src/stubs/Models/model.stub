@@ -15,4 +15,12 @@
 {{dates}}
 
 {{setter_getter}}
+
+{{hasOne}}
+
+{{hasMany}}
+
+{{belongsTo}}
+
+{{belongsToMany}}
 }

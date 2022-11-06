@@ -1,5 +1,5 @@
 <?php
-namespace Clive0417\ModelGenerator\Supports;
+namespace Clive0417\DBDiagramRegularParse\Supports;
 
 use Doctrine\DBAL\Types\Types;
 
@@ -41,18 +41,4 @@ class ModelCreatorSupport
         ];
     }
 
-    public static function getLoggbleColumn()
-    {
-        return [
-            'user_id',
-            'user_type',
-            'entity',
-            'action',
-            'before',
-            'after',
-            'header',
-            'comment',
-            'ip',
-        ];
-    }
 }

@@ -2,7 +2,6 @@
 
 namespace Clive0417\DBDiagramRegularParse\Models\Models;
 
-
 use Clive0417\DBDiagramRegularParse\Formats\Models\ModelCreatorFormat;
 
 class ClassNameModel
@@ -16,6 +15,7 @@ class ClassNameModel
     public function __construct($table_name)
     {
         $this->extend_from = ModelCreatorFormat::getExtendFrom($table_name);
+        $this->class_name = ModelCreatorFormat::getEntityName($table_name);
     }
 
     public function addImplement(string $implement)

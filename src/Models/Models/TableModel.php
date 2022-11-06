@@ -17,4 +17,9 @@ class TableModel
     {
         return "\t".'protected $table = '."'".$this->table_name."';";
     }
+
+    public function getTableName()
+    {
+        return $this->table_name;
+    }
 }

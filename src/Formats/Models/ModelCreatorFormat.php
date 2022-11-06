@@ -2,7 +2,7 @@
 
 namespace Clive0417\DBDiagramRegularParse\Formats\Models;
 
-use Clive0417\ModelGenerator\Supports\ModelCreatorSupport;
+use Clive0417\DBDiagramRegularParse\Supports\ModelCreatorSupport;
 use Doctrine\DBAL\Schema\Column;
 use Illuminate\Support\Str;
 
@@ -113,6 +113,11 @@ class ModelCreatorFormat
                 return 'Illuminate\Foundation\Auth\User';
             case 'Carbon':
                 return 'Carbon';
+            case 'HasOne':
+            case 'HasMany':
+            case 'BelongsTo':
+            case 'BelongsToMany':
+                return 'Illuminate\Database\Eloquent\Relations';
             default:
                 return '';
         }

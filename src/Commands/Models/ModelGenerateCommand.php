@@ -13,14 +13,14 @@ use Clive0417\DBDiagramRegularParse\Models\Models\SetterGetterModel;
 use Clive0417\DBDiagramRegularParse\Models\Models\TableModel;
 use Clive0417\DBDiagramRegularParse\Models\Models\TraitModel;
 use Clive0417\DBDiagramRegularParse\Models\Models\UseModel;
-use Clive0417\ModelGenerator\Supports\ModelCreator;
-use Clive0417\ModelGenerator\Supports\ModelCreatorSupport;
+use Clive0417\DBDiagramRegularParse\Creators\ModelCreator;
+use Clive0417\DBDiagramRegularParse\Supports\ModelCreatorSupport;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
 class ModelGenerateCommand extends Command
 {
-    protected $signature = 'clive0417:model_generate';
+    protected $signature = 'clive0417:model_generate_for_package';
 
 
     protected $description = '讀取DB資料，自動產生model file';
@@ -86,6 +86,72 @@ class ModelGenerateCommand extends Command
             $ModelCreator->setFillables($FillableModel);
             $ModelCreator->setDates($DatesModel);
             $ModelCreator->setHidden($HiddenModel);
+
+            //設定relations HasOne
+            $hasOne_file_stream = fopen(base_path() . "/storage/app/tmp/table_relation_hasOne_file.csv", 'r');
+            while(! feof($hasOne_file_stream))
+            {
+                $has_one = fgetcsv($hasOne_file_stream);
+                if ($has_one == false) {
+                    continue;
+                }
+                if ($has_one[0] == $table_name) {
+                    $ModelCreator->addHasOne($has_one);
+                }
+            }
+
+            if ($ModelCreator->getHasOne() !== []) {
+                $ModelCreator->addUse(new UseModel('HasOne'));
+            }
+
+            //設定relations HasMany
+            $hasMany_file_stream = fopen(base_path() . "/storage/app/tmp/table_relation_hasMany_file.csv", 'r');
+            while (!feof($hasMany_file_stream)) {
+                $has_many = fgetcsv($hasMany_file_stream);
+                if ($has_many == false) {
+                    continue;
+                }
+                if ($has_many[0] == $table_name) {
+                    $ModelCreator->addHasMany($has_many);
+                }
+            }
+
+            if ($ModelCreator->getHasMany() !== []) {
+                $ModelCreator->addUse(new UseModel('HasMany'));
+            }
+
+            //設定relations belongsTo
+            $belongsTo_file_stream = fopen(base_path() . "/storage/app/tmp/table_relation_belongsTo_file.csv", 'r');
+            while (!feof($belongsTo_file_stream)) {
+                $belongs_to = fgetcsv($belongsTo_file_stream);
+                if ($belongs_to == false) {
+                    continue;
+                }
+                if ($belongs_to[0] == $table_name) {
+                    $ModelCreator->addBelongsTo($belongs_to);
+                }
+            }
+
+            if ($ModelCreator->getBelongsTo() !== []) {
+                $ModelCreator->addUse(new UseModel('BelongsTo'));
+            }
+
+            //設定relations belongsToMany
+            $belongsToMany_file_stream = fopen(base_path() . "/storage/app/tmp/table_relation_belongsToMany_file.csv", 'r');
+            while (!feof($belongsToMany_file_stream)) {
+                $belongs_to_many = fgetcsv($belongsToMany_file_stream);
+                if ($belongs_to_many == false) {
+                    continue;
+                }
+                if ($belongs_to_many[0] == $table_name) {
+                    $ModelCreator->addBelongsToMany($belongs_to_many);
+                }
+            }
+
+            if ($ModelCreator->getBelongsToMany() !== []) {
+                $ModelCreator->addUse(new UseModel('BelongsToMany'));
+            }
+
             //匯出Entity 檔案
             $ModelCreator->replaceDummyWordsInStub()->outputEntity();
             $this->info(sprintf('%s 匯出完成',$ModelCreator->getEntityName()->toline()));

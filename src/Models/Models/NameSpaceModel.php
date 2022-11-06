@@ -12,7 +12,7 @@ class NameSpaceModel
 
     public function __construct($table_name)
     {
-        $this->name_space_path = 'namespace '.str_replace('/','\\',sprintf('%s%s/Entities;',config('model-generator.entity_namespace_root_path'),ModelCreatorFormat::getTableGroupName($table_name)));
+        $this->name_space_path = 'namespace '.str_replace('/','\\',sprintf('%s%s/Entities;','App\\Models\\',ModelCreatorFormat::getTableGroupName($table_name)));
     }
 
     public function toLine()

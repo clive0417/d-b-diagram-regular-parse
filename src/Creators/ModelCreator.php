@@ -1,7 +1,8 @@
 <?php
-namespace Clive0417\ModelGenerator\Supports;
 
-use Clive0417\ModelGenerator\Models\NameSpaceModel;
+namespace Clive0417\DBDiagramRegularParse\Creators;
+
+use Clive0417\DBDiagramRegularParse\Models\Models\NameSpaceModel;
 use Illuminate\Support\Facades\File;
 
 class ModelCreator
@@ -11,19 +12,24 @@ class ModelCreator
     protected $entity_name;
     protected $namespace;
 
-    protected $stub_path = __DIR__ . '/../Commands/stubs/entity.stub';
+    protected $stub_path = __DIR__ . '/../stubs/Models/model.stub';
+
 
     protected $stub;
 
     protected $class_name;
 
     protected $use = [];
-    protected $traits =  [];
+    protected $traits = [];
     protected $table;
-    protected $fillables ;
-    protected $hidden ;
-    protected $dates ;
+    protected $fillables;
+    protected $hidden;
+    protected $dates;
     protected $setter_getters = [];
+    protected $has_one = [];
+    protected $has_many = [];
+    protected $belongs_to = [];
+    protected $belongs_to_many = [];
 
 
     public function __construct()
@@ -32,10 +38,103 @@ class ModelCreator
 
     }
 
+    public function replaceDummyWordsInStub()
+    {
+        // 替換 namespace
+        $this->stub = str_replace('{{namespace}}', $this->getNamespace()->toLine(), $this->stub);
+
+        // 替換 use
+        if (!empty($this->getUse())) {
+            $use_full_test = '';
+            foreach ($this->getUse() as $Use) {
+                /** @var \Clive0417\ModelGenerator\Models\UseModel $Use */
+                $use_full_test = $use_full_test . $Use->toLine() . PHP_EOL;
+            }
+            $this->stub = str_replace('{{use}}', $use_full_test, $this->stub);
+        } else {
+            $this->stub = str_replace('{{use}}', '', $this->stub);
+        }
+        //替換 class
+        $this->stub = str_replace('{{class}}', $this->getClassName()->toLine(), $this->stub);
+
+        //替換 trait
+        if (!empty($this->getTraits())) {
+            $trait_full_test = '';
+            foreach ($this->getTraits() as $Trait) {
+                /** @var \Clive0417\ModelGenerator\Models\TraitModel $Trait */
+                $trait_full_test = $trait_full_test . $Trait->toLine() . PHP_EOL;
+            }
+            $this->stub = str_replace('{{trait}}', $trait_full_test, $this->stub);
+        } else {
+            $this->stub = str_replace('{{trait}}', '', $this->stub);
+        }
+
+        //替換 table
+        $this->stub = str_replace('{{table}}', $this->getTable()->toLine(), $this->stub);
+
+        //替換 fillable
+        $this->stub = str_replace('{{fillable}}', $this->getFillables()->toLine(), $this->stub);
+
+        //替換 hidden
+        $this->stub = str_replace('{{hidden}}', $this->getHidden()->toLine(), $this->stub);
+
+        //替換 dates
+        $this->stub = str_replace('{{dates}}', $this->getDates()->toLine(), $this->stub);
+
+        //替換 setter_getter
+        $setter_getter_full_test = '';
+        foreach ($this->getSetterGetters() as $SetterGetter) {
+            /** @var \Clive0417\ModelGenerator\Models\SetterGetterModel $SetterGetter */
+            $setter_getter_full_test = $setter_getter_full_test . $SetterGetter->toLine() . PHP_EOL;
+        }
+        $this->stub = str_replace('{{setter_getter}}', $setter_getter_full_test, $this->stub,);
+
+        //替換 HasOne relation
+        $hasOne_full_text = '';
+        foreach ($this->getHasOne() as $has_one) {
+            $hasOne_full_text = '    ' . $hasOne_full_text . PHP_EOL . '    ' . $has_one[1] . PHP_EOL;
+        }
+        $this->stub = str_replace('{{hasOne}}', $hasOne_full_text, $this->stub);
+
+
+        //替換 HasMany relation
+        $hasMany_full_text   = '';
+        foreach ($this->getHasMany() as $has_many) {
+            $hasMany_full_text = '    ' . $hasMany_full_text . PHP_EOL . '    ' . $has_many[1] . PHP_EOL;
+        }
+        $this->stub = str_replace('{{hasMany}}', $hasMany_full_text, $this->stub);
+
+        //替換 belongsTo relation
+        $belongsTo_full_text   = '';
+        foreach ($this->getBelongsTo() as $belongs_to) {
+            $belongsTo_full_text = '    ' . $belongsTo_full_text . PHP_EOL . '    ' . $belongs_to[1] . PHP_EOL;
+        }
+        $this->stub = str_replace('{{belongsTo}}', $belongsTo_full_text, $this->stub);
+
+
+        //替換 belongsToMany relation
+        $belongsToMany_full_text   = '';
+        foreach ($this->getBelongsToMany() as $belongs_to_many) {
+            $belongsToMany_full_text = '    ' . $belongsToMany_full_text . PHP_EOL . '    ' . $belongs_to_many[1] . PHP_EOL;
+        }
+        $this->stub = str_replace('{{belongsToMany}}', $belongsToMany_full_text, $this->stub);
+
+        return $this;
+    }
+
+    public function outputEntity()
+    {
+        if (!File::exists($this->getEntityPath()->toLine())) {
+            File::makeDirectory($this->getEntityPath()->toLine(), $mode = 0777, true, true);
+        }
+
+        File::put($this->getEntityPath()->toLine() . $this->getEntityName()->toLine() . '.php', $this->getStub());
+    }
+
     public function addUse($Use)
     {
         $this->use[] = $Use;
-
+        return $this;
     }
 
     /**
@@ -45,55 +144,73 @@ class ModelCreator
     public function addTrait($Trait)
     {
         $this->traits[] = $Trait;
-
+        return $this;
     }
 
 
     public function addSetterGetter($SetterGetter)
     {
         $this->setter_getters[] = $SetterGetter;
+        return $this;
+    }
+
+    public function addHasOne(array $has_one)
+    {
+        $this->has_one[] = $has_one;
+        return $this;
+    }
+
+
+    public function addHasMany(array $has_many)
+    {
+        $this->has_many[] = $has_many;
+        return $this;
+    }
+
+    public function addBelongsTo(array $belongs_to)
+    {
+        $this->belongs_to[] = $belongs_to;
+        return $this;
+    }
+
+    public function addBelongsToMany(array $belongs_to_many)
+    {
+        $this->belongs_to_many[] = $belongs_to_many;
+        return $this;
 
     }
 
-    /**
-     * @param mixed $entity_path
-     */
-    public function setEntityPath($entity_path): void
+
+    public function setEntityPath($entity_path)
     {
         $this->entity_path = $entity_path;
+        return $this;
     }
 
-    /**
-     * @return mixed
-     */
+
     public function getEntityPath()
     {
         return $this->entity_path;
     }
 
-    /**
-     * @param mixed $entity_name
-     */
-    public function setEntityName($entity_name): void
+
+    public function setEntityName($entity_name)
     {
         $this->entity_name = $entity_name;
+        return $this;
     }
 
-    /**
-     * @return mixed
-     */
+
     public function getEntityName()
     {
         return $this->entity_name;
     }
 
 
-    /**
-     * @param mixed $namespace
-     */
-    public function setNamespace($namespace): void
+    public function setNamespace($namespace)
     {
         $this->namespace = $namespace;
+        return $this;
     }
 
     /**
@@ -104,12 +221,11 @@ class ModelCreator
         return $this->namespace;
     }
 
-    /**
-     * @param string $stub_path
-     */
-    public function setStubPath(string $stub_path): void
+
+    public function setStubPath(string $stub_path)
     {
         $this->stub_path = $stub_path;
+        return $this;
     }
 
     /**
@@ -120,12 +236,11 @@ class ModelCreator
         return $this->stub_path;
     }
 
-    /**
-     * @param string $stub
-     */
-    public function setStub(string $stub): void
+
+    public function setStub(string $stub)
     {
         $this->stub = $stub;
+        return $this;
     }
 
     /**
@@ -136,12 +251,11 @@ class ModelCreator
         return $this->stub;
     }
 
-    /**
-     * @param mixed $class_name
-     */
-    public function setClassName($class_name): void
+
+    public function setClassName($class_name)
     {
         $this->class_name = $class_name;
+        return $this;
     }
 
     /**
@@ -152,12 +266,11 @@ class ModelCreator
         return $this->class_name;
     }
 
-    /**
-     * @param array $use
-     */
-    public function setUse(array $use): void
+
+    public function setUse(array $use)
     {
         $this->use = $use;
+        return $this;
     }
 
     /**
@@ -171,9 +284,10 @@ class ModelCreator
     /**
      * @param array $traits
      */
-    public function setTraits(array $traits): void
+    public function setTraits(array $traits)
     {
         $this->traits = $traits;
+        return $this;
     }
 
     /**
@@ -187,9 +301,10 @@ class ModelCreator
     /**
      * @param mixed $table
      */
-    public function setTable($table): void
+    public function setTable($table)
     {
         $this->table = $table;
+        return $this;
     }
 
     /**
@@ -203,9 +318,10 @@ class ModelCreator
     /**
      * @param mixed $fillables
      */
-    public function setFillables($fillables): void
+    public function setFillables($fillables)
     {
         $this->fillables = $fillables;
+        return $this;
     }
 
     /**
@@ -219,9 +335,10 @@ class ModelCreator
     /**
      * @param mixed $hidden
      */
-    public function setHidden($hidden): void
+    public function setHidden($hidden)
     {
         $this->hidden = $hidden;
+        return $this;
     }
 
     /**
@@ -235,9 +352,10 @@ class ModelCreator
     /**
      * @param mixed $dates
      */
-    public function setDates($dates): void
+    public function setDates($dates)
     {
         $this->dates = $dates;
+        return $this;
     }
 
     /**
@@ -251,9 +369,10 @@ class ModelCreator
     /**
      * @param array $setter_getters
      */
-    public function setSetterGetters(array $setter_getters): void
+    public function setSetterGetters(array $setter_getters)
     {
         $this->setter_getters = $setter_getters;
+        return $this;
     }
 
     /**
@@ -264,70 +383,25 @@ class ModelCreator
         return $this->setter_getters;
     }
 
-
-
-    public function replaceDummyWordsInStub()
+    public function getHasOne(): array
     {
-        // 替換 namespace
-        $this->stub = str_replace('{{namespace}}',$this->getNamespace()->toLine(),$this->stub);
-
-        // 替換 use
-        if (!empty($this->getUse())) {
-            $use_full_test = '';
-            foreach ($this->getUse() as $Use) {
-                /** @var \Clive0417\ModelGenerator\Models\UseModel $Use */
-                $use_full_test = $use_full_test.$Use->toLine().PHP_EOL;
-            }
-            $this->stub =  str_replace('{{use}}',$use_full_test,$this->stub);
-        } else {
-            $this->stub =  str_replace('{{use}}','',$this->stub);
-        }
-        //替換 class
-        $this->stub =  str_replace('{{class}}',$this->getClassName()->toLine(),$this->stub);
-
-        //替換 trait
-        if (!empty($this->getTraits())) {
-            $trait_full_test = '';
-            foreach ($this->getTraits() as $Trait) {
-                /** @var \Clive0417\ModelGenerator\Models\TraitModel $Trait */
-                $trait_full_test = $trait_full_test.$Trait->toLine().PHP_EOL;
-            }
-            $this->stub =  str_replace('{{trait}}',$trait_full_test,$this->stub);
-        } else {
-            $this->stub =  str_replace('{{trait}}','',$this->stub);
-        }
-
-        //替換 table
-        $this->stub =  str_replace('{{table}}',$this->getTable()->toLine(),$this->stub);
-
-        //替換 fillable
-        $this->stub =  str_replace('{{fillable}}',$this->getFillables()->toLine(),$this->stub);
-
-        //替換 hidden
-        $this->stub =  str_replace('{{hidden}}',$this->getHidden()->toLine(),$this->stub);
-
-        //替換 dates
-        $this->stub =  str_replace('{{dates}}',$this->getDates()->toLine(),$this->stub);
-
-        //替換 setter_getter
-        if (!empty($this->getSetterGetters())) {
-            $setter_getter_full_test = '';
-            foreach ($this->getSetterGetters() as $SetterGetter) {
-                /** @var \Clive0417\ModelGenerator\Models\SetterGetterModel $SetterGetter */
-                $setter_getter_full_test = $setter_getter_full_test.$SetterGetter->toLine().PHP_EOL;
-            }
-            $this->stub =  str_replace('{{setter_getter}}',$setter_getter_full_test,$this->stub,);
-        }
-
-        return $this;
+        return $this->has_one;
     }
 
-    public function outputEntity()
-    {
-        if (!File::exists($this->getEntityPath()->toLine())) {
-            File::makeDirectory($this->getEntityPath()->toLine(), $mode = 0777, true, true);
-        }
 
-        File::put($this->getEntityPath()->toLine().$this->getEntityName()->toLine().'.php',$this->getStub());
+    public function getHasMany(): array
+    {
+        return $this->has_many;
     }
+
+    public function getBelongsTo(): array
+    {
+        return $this->belongs_to;
+    }
+
+    public function getBelongsToMany(): array
+    {
+        return $this->belongs_to_many;
+    }
+
 }

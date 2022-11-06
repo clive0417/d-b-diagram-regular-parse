@@ -22,7 +22,7 @@ class HasOneModel
             return $this->hasOne(MemberProfileEntity::class, 'member_id', 'id');
         }
          * */
-        $line = "public function {{relation_method_name}}(): HasOne
+        $line = "    public function {{relation_method_name}}(): HasOne
         {
             return \$this->hasOne({{relation_entity_name}}::class, {{foreign_key}}, {{local_key}});
         }";

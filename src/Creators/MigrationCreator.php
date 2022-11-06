@@ -38,30 +38,6 @@ class MigrationCreator
 
     }
 
-    public function setTableName(string $table_name)
-    {
-        $this->table_name = $table_name;
-    }
-    public function getTableName()
-    {
-        return $this->table_name;
-    }
-    public function setTableComment(string $table_comment)
-    {
-        $this->table_comment = $table_comment;
-    }
-
-    public function addColumn(ColumnModel $ColumnModel)
-    {
-        $this->Columns->add($ColumnModel);
-        return $this;
-    }
-    public function addIndex(IndexModel $IndexModel)
-    {
-        $this->Indexes->add($IndexModel);
-        return $this;
-    }
-
     public function replaceDummyWordsInStub()
     {
         // 替換 table name
@@ -97,7 +73,6 @@ class MigrationCreator
             $this->stub =  str_replace('{{table_comment}}',$this->table_comment,$this->stub);
         }
 
-
         return $this;
     }
 
@@ -108,5 +83,29 @@ class MigrationCreator
         }
 
         File::put($this->migration_path.Carbon::now()->format('Y_m_d_His').'_create_'.$this->table_name.'_table'.'.php',$this->stub);
+    }
+
+    public function setTableName(string $table_name)
+    {
+        $this->table_name = $table_name;
+    }
+    public function getTableName()
+    {
+        return $this->table_name;
+    }
+    public function setTableComment(string $table_comment)
+    {
+        $this->table_comment = $table_comment;
+    }
+
+    public function addColumn(ColumnModel $ColumnModel)
+    {
+        $this->Columns->add($ColumnModel);
+        return $this;
+    }
+    public function addIndex(IndexModel $IndexModel)
+    {
+        $this->Indexes->add($IndexModel);
+        return $this;
     }
 }

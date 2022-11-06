@@ -2,14 +2,14 @@
 namespace Clive0417\DBDiagramRegularParse\Commands\Migrations;
 
 use Carbon\Carbon;
-use Clive0417\DBDiagramRegularParse\Models\Relations\BelongsToManyModel;
-use Clive0417\DBDiagramRegularParse\Models\Relations\BelongsToModel;
-use Clive0417\DBDiagramRegularParse\Models\Migrations\ColumnModel;
-use Clive0417\DBDiagramRegularParse\Models\Relations\HasManyModel;
-use Clive0417\DBDiagramRegularParse\Models\Relations\HasOneModel;
-use Clive0417\DBDiagramRegularParse\Models\Migrations\IndexModel;
 use Clive0417\DBDiagramRegularParse\Creators\MigrationCreator;
 use Clive0417\DBDiagramRegularParse\Formats\Migrations\MigrationCreatorFormat;
+use Clive0417\DBDiagramRegularParse\Models\Migrations\ColumnModel;
+use Clive0417\DBDiagramRegularParse\Models\Migrations\IndexModel;
+use Clive0417\DBDiagramRegularParse\Models\Relations\BelongsToManyModel;
+use Clive0417\DBDiagramRegularParse\Models\Relations\BelongsToModel;
+use Clive0417\DBDiagramRegularParse\Models\Relations\HasManyModel;
+use Clive0417\DBDiagramRegularParse\Models\Relations\HasOneModel;
 use Illuminate\Console\Command;
 
 class MigrationGenerateCommand extends Command
@@ -31,10 +31,10 @@ class MigrationGenerateCommand extends Command
         $db_diagram_txt_array = explode(PHP_EOL, $db_diagram);
 
         //2.建立輸出空白檔 relation file
-        $table_relation_belongsToMany_file = fopen(base_path() . "/storage/app/tmp/table_relation_belongsToMany_file.csv", 'w+');
         $table_relation_hasOne_file = fopen(base_path() . "/storage/app/tmp/table_relation_hasOne_file.csv", 'w+');
         $table_relation_hasMany_file = fopen(base_path() . "/storage/app/tmp/table_relation_hasMany_file.csv", 'w+');
         $table_relation_belongsTo_file = fopen(base_path() . "/storage/app/tmp/table_relation_belongsTo_file.csv", 'w+');
+        $table_relation_belongsToMany_file = fopen(base_path() . "/storage/app/tmp/table_relation_belongsToMany_file.csv", 'w+');
 
         //loop  status ㄌ要在foreach 外，因為是控制下一層迴圈。
         $Table                 = (new MigrationCreator());

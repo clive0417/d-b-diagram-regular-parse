@@ -45,11 +45,11 @@ class ColumnModel
             $line = $line.'->'.'nullable()';
         }
         //append unsigned
-        if ($this->column_allow_minus === false) {
+        // TODO 待建立 Support 或者是常數 替換 array hard cord
+        if ($this->column_allow_minus === false && in_array($this->column_type,['float','decimal','tinyint','smallint','mediumint','bigint']) ) {
             $line = $line.'->'.'unsigned()';
         }
         //append default
-        // TODO  添加INT judge
         if ($this->column_default !== null) {
             $line = $line.'->'.sprintf('default(%s)',"'".$this->column_default."'");
         }
