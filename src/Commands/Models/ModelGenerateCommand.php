@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 
 class ModelGenerateCommand extends Command
 {
-    protected $signature = 'clive0417:model_generate_for_package';
+    protected $signature = 'clive0417:model_generate';
 
 
     protected $description = '讀取DB資料，自動產生model file';
