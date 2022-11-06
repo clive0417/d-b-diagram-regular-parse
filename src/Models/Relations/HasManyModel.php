@@ -22,10 +22,7 @@ class HasManyModel
             return $this->hasOne(MemberProfileEntity::class, 'member_id', 'id');
         }
          * */
-        $line = "public function {{relation_method_name}}(): HasMany
-        {
-            return \$this->hasMany({{relation_entity_name}}::class, {{foreign_key}}, {{local_key}});
-        }";
+        $line = "public function {{relation_method_name}}(): HasMany{return \$this->hasMany({{relation_entity_name}}::class, {{foreign_key}}, {{local_key}});}";
         $line = Str::replace('{{relation_method_name}}',$this->relation_method_name,$line);
         $line = Str::replace('{{relation_entity_name}}',$this->relation_entity_name,$line);
         $line = Str::replace('{{foreign_key}}',"'".$this->foreign_key."'",$line);
